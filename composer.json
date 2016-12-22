@@ -9,7 +9,9 @@
             "email": "enapiuz@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "phpunit/phpunit": "^5.7"
+    },
     "autoload": {
         "psr-4": {
             "Monk\\": "src/"
