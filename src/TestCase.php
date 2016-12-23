@@ -2,14 +2,9 @@
 
 namespace Monk;
 
-use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+use PHPUnit_Framework_TestCase;
 
-class TestCase extends PHPUnitTestCase
+class TestCase extends PHPUnit_Framework_TestCase
 {
-
-
-    public function monk(): Monk
-    {
-        return Monk::factory();
-    }
+    use MonkTrait;
 }

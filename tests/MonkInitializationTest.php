@@ -1,22 +1,36 @@
 <?php
 
 use Monk\Monk;
-use Monk\TestCase;
+use Monk\MonkTrait;
 
-class MonkInitializationTest extends TestCase
+class MonkInitializationTest extends PHPUnit_Framework_TestCase
 {
+    use MonkTrait;
 
 
     public function testInitialization()
     {
         $monk = Monk::factory();
-        $this->assertInstanceOf('Monk\Monk', $monk);
+        $this->assertInstanceOf(Monk::class, $monk);
     }
 
 
     public function testBuiltInMethodInitialization()
     {
-        $monk = $this->monk();
-        $this->assertInstanceOf('Monk\Monk', $monk);
+        $monk = $this->getMonk();
+        $this->assertInstanceOf(Monk::class, $monk);
+    }
+
+
+    public function testDefaultConfigInitialization()
+    {
+        $defaultConfig = new Monk\Config();
+        $defaultConfig->addDefaultParam('test_param', 'test_value');
+        $this->setMonkDefaultConfig($defaultConfig);
+
+        $monk = $this->getMonk();
+        $monkConfig = $monk->config();
+
+        $this->assertSame($defaultConfig, $monkConfig, 'Config must be equal');
     }
 }

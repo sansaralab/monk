@@ -4,7 +4,8 @@ namespace Monk\Monk;
 
 class Method
 {
-    const POST = 'POST';
     const GET = 'GET';
+    const POST = 'POST';
     const PUT = 'PUT';
+    const DELETE = 'DELETE';
 }
