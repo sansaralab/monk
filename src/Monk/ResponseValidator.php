@@ -64,9 +64,46 @@ class ResponseValidator
         $data = json_decode($this->getResponse()->getResponse()->getBody());
         $reader = new Selector($data);
         $readPointer = new Pointer($reader);
-        $actualValue = $readPointer->read($path)->getAsString();
+        $actualValue = $readPointer->read($path)->getAsStruct();
         PHPUnit_Framework_Assert::assertEquals($expectedValue, $actualValue, $errorMessage);
 
+        return $this;
+    }
+
+
+    /**
+     * TODO
+     * @param string $expectedKey
+     * @param string $errorMessage
+     * @return $this
+     */
+    public function hasHeader(string $expectedKey, string $errorMessage)
+    {
+        return $this;
+    }
+
+
+    /**
+     * TODO
+     * @param string $expectedKey
+     * @param string $expectedValue
+     * @param string $errorMessage
+     * @return $this
+     */
+    public function header(string $expectedKey, string $expectedValue, string $errorMessage)
+    {
+        return $this;
+    }
+
+
+    /**
+     * TODO
+     * @param string $schema
+     * @param string $errorMessage
+     * @return $this
+     */
+    public function jsonSchema(string $schema, string $errorMessage)
+    {
         return $this;
     }
 }

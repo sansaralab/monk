@@ -99,9 +99,9 @@ class Config extends Factory
 
 
     /**
-     * @return Auth
+     * @return Auth|null
      */
-    public function getAuth(): Auth
+    public function getAuth()
     {
         return $this->auth;
     }

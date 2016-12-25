@@ -3,7 +3,7 @@
 namespace Monk;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Exception\RequestException;
 use Monk\Base\DefaultUrlFormer;
 use Monk\Base\Factory;
 use Monk\Interfaces\UrlFormerInterface;
@@ -119,19 +119,10 @@ class Monk extends Factory
     {
         $this->assertPredefined();
 
-        $url = $this->urlFormer->getUrl($this->resource);
-
-        $headers = $this->config()->getHeaders();
-
-        $request = new Request(
-            $this->method,
-            $url,
-            $headers
-        );
-
-        $paramsData = $this->config()->getParams();
         $requestParameters = [];
 
+        // setting parameters by type
+        $paramsData = $this->config()->getParams();
         if (in_array($this->method, [Method::POST, Method::PUT, Method::DELETE])) {
             if ($this->config()->getParamsType() === Config::PARAMS_FORM) {
                 $requestParameters['form_params'] = $paramsData;
@@ -142,13 +133,33 @@ class Monk extends Factory
             }
         }
 
+        // setting headers
+        $requestParameters['headers'] = $this->config()->getHeaders();
+
+        // setting auth
+        $auth = $this->config()->getAuth();
+        if (!is_null($auth)) {
+            $requestParameters['auth'] = [
+                $auth->getLogin(),
+                $auth->getPassword()
+            ];
+        }
+
+        // getting url
+        $url = $this->urlFormer->getUrl($this->resource);
+
+        // sending request
         $client = new Client();
-        $client->send($request);
-        $response = $client->request(
-            $this->method,
-            $this->resource,
-            []
-        );
+        try {
+            $response = $client->request(
+                $this->method,
+                $url,
+                $requestParameters
+            );
+        } catch (RequestException $ex) {
+            $response = $ex->getResponse();
+        }
+
         return Response::factory()->setResponse($response);
     }
 
