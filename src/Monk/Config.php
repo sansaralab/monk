@@ -2,14 +2,25 @@
 
 namespace Monk\Monk;
 
+use Monk\Base\Factory;
 use Monk\DTO\Auth;
 
 /**
  * Class Config
  * @package Monk\Monk
  */
-class Config
+class Config extends Factory
 {
+
+    /**
+     * Params will send as x-form-url-encoded.
+     */
+    const PARAMS_FORM = 0;
+
+    /**
+     * Params will send as json body.
+     */
+    const PARAMS_BODY = 1;
 
     /**
      * @var string[]
@@ -19,12 +30,17 @@ class Config
     /**
      * @var array
      */
-    protected $defaultParamList = [];
+    protected $paramList = [];
 
     /**
      * @var Auth
      */
     protected $auth = null;
+
+    /**
+     * @var int
+     */
+    protected $paramsType = self::PARAMS_FORM;
 
 
     /**
@@ -54,9 +70,9 @@ class Config
      * @param $value
      * @return $this
      */
-    public function addDefaultParam(string $key, $value)
+    public function addParam(string $key, $value)
     {
-        $this->defaultParamList[$key] = $value;
+        $this->paramList[$key] = $value;
         return $this;
     }
 
@@ -64,9 +80,9 @@ class Config
     /**
      * @return array
      */
-    public function getDefaultParams(): array
+    public function getParams(): array
     {
-        return $this->defaultParamList;
+        return $this->paramList;
     }
 
 
@@ -88,5 +104,25 @@ class Config
     public function getAuth(): Auth
     {
         return $this->auth;
+    }
+
+
+    /**
+     * @param int $type
+     * @return $this
+     */
+    public function setParamsType(int $type)
+    {
+        $this->paramsType = $type;
+        return $this;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getParamsType(): int
+    {
+        return $this->paramsType;
     }
 }

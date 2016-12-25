@@ -2,20 +2,47 @@
 
 namespace Monk\Monk;
 
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Monk\Base\Factory;
 
+/**
+ * Class Response
+ * @package Monk\Monk
+ */
 class Response extends Factory
 {
 
+    /**
+     * @var GuzzleResponse
+     */
+    protected $rawResponse = null;
 
-    public function assertStatusCode(int $code)
+
+    /**
+     * @return GuzzleResponse
+     */
+    public function getResponse(): GuzzleResponse
     {
+        return $this->rawResponse;
+    }
+
+
+    /**
+     * @param GuzzleResponse $rawResponse
+     * @return $this
+     */
+    public function setResponse(GuzzleResponse $rawResponse)
+    {
+        $this->rawResponse = $rawResponse;
         return $this;
     }
 
 
-    public function assertJsonSchema(string $schemaName)
+    /**
+     * @return ResponseValidator
+     */
+    public function assert(): ResponseValidator
     {
-        return $this;
+        return new ResponseValidator($this);
     }
 }

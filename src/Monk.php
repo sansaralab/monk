@@ -8,8 +8,13 @@ use Monk\Base\DefaultUrlFormer;
 use Monk\Base\Factory;
 use Monk\Interfaces\UrlFormerInterface;
 use Monk\Monk\Config;
+use Monk\Monk\Method;
 use Monk\Monk\Response;
 
+/**
+ * Class Monk
+ * @package Monk
+ */
 class Monk extends Factory
 {
 
@@ -21,7 +26,7 @@ class Monk extends Factory
     /**
      * @var null Request method.
      */
-    protected $method = null;
+    protected $method = Method::GET;
 
     /**
      * @var Config Monk config.
@@ -33,12 +38,10 @@ class Monk extends Factory
      */
     protected $urlFormer = null;
 
+
     /**
-     * @var string[]
+     * Monk constructor.
      */
-    protected $headers = [];
-
-
     protected function __construct()
     {
         $this->config = new Config();
@@ -64,6 +67,10 @@ class Monk extends Factory
     }
 
 
+    /**
+     * @param Config $config
+     * @return $this
+     */
     public function setConfig(Config $config)
     {
         $this->config = $config;
@@ -93,6 +100,10 @@ class Monk extends Factory
     }
 
 
+    /**
+     * @param UrlFormerInterface $former
+     * @return $this
+     */
     public function setUrlFormer(UrlFormerInterface $former)
     {
         $this->urlFormer = $former;
@@ -102,6 +113,7 @@ class Monk extends Factory
 
     /**
      * @return Response
+     * @throws \Exception
      */
     public function send(): Response
     {
@@ -109,15 +121,26 @@ class Monk extends Factory
 
         $url = $this->urlFormer->getUrl($this->resource);
 
-        // Setting default headers.
-        $defaultHeaders = $this->config()->getHeaders();
-        $headers = array_merge($defaultHeaders, $this->headers);
+        $headers = $this->config()->getHeaders();
 
         $request = new Request(
             $this->method,
             $url,
             $headers
         );
+
+        $paramsData = $this->config()->getParams();
+        $requestParameters = [];
+
+        if (in_array($this->method, [Method::POST, Method::PUT, Method::DELETE])) {
+            if ($this->config()->getParamsType() === Config::PARAMS_FORM) {
+                $requestParameters['form_params'] = $paramsData;
+            } elseif ($this->config()->getParamsType() === Config::PARAMS_BODY) {
+                $requestParameters['body'] = json_encode($paramsData);
+            } else {
+                throw new \Exception("Wrong request params type: '{$this->config()->getParamsType()}'");
+            }
+        }
 
         $client = new Client();
         $client->send($request);
@@ -126,10 +149,13 @@ class Monk extends Factory
             $this->resource,
             []
         );
-        return Response::factory();
+        return Response::factory()->setResponse($response);
     }
 
 
+    /**
+     * @throws \Exception
+     */
     protected function assertPredefined()
     {
         if (is_null($this->method)) {

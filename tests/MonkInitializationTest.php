@@ -1,6 +1,7 @@
 <?php
 
 use Monk\Monk;
+use Monk\Monk\Config;
 use Monk\MonkTrait;
 
 class MonkInitializationTest extends PHPUnit_Framework_TestCase
@@ -24,8 +25,8 @@ class MonkInitializationTest extends PHPUnit_Framework_TestCase
 
     public function testDefaultConfigInitialization()
     {
-        $defaultConfig = new Monk\Config();
-        $defaultConfig->addDefaultParam('test_param', 'test_value');
+        $defaultConfig = Config::factory();
+        $defaultConfig->addParam('test_param', 'test_value');
         $this->setMonkDefaultConfig($defaultConfig);
 
         $monk = $this->getMonk();

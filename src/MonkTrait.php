@@ -16,7 +16,7 @@ trait MonkTrait
     public function getMonk(): Monk
     {
         $monk = Monk::factory();
-        $monk->setConfig($this->monkDefaultConfig ?? new Config());
+        $monk->setConfig($this->monkDefaultConfig ?? Config::factory());
         return $monk;
     }
 
