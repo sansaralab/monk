@@ -12,4 +12,5 @@ install:
   - "composer install --dev"
 
 script:
-  - "./vendor/phpunit/phpunit/phpunit ./tests"
+  - "./vendor/phpunit/phpunit/phpunit -c ./phpunit.xml"
+  - "./vendor/bin/test-reporter"
