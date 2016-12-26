@@ -37,17 +37,23 @@ class ResponseValidator
     }
 
 
+    protected function getErrorMessage(string $message): string
+    {
+        return $message;
+    }
+
+
     /**
      * @param int $code
      * @param string $errorMessage
      * @return $this
      */
-    public function statusCode(int $code, string $errorMessage)
+    public function statusCode(int $code, string $errorMessage = '')
     {
         PHPUnit_Framework_Assert::assertEquals(
             $code,
             $this->getResponse()->getResponse()->getStatusCode(),
-            $errorMessage
+            $this->getErrorMessage($errorMessage)
         );
 
         return $this;
@@ -57,41 +63,66 @@ class ResponseValidator
     /**
      * @param string $path
      * @param $expectedValue
+     * @param string $errorMessage
      * @return $this
      */
-    public function jsonPointer(string $path, $expectedValue, $errorMessage)
+    public function jsonPointer(string $path, $expectedValue, $errorMessage = '')
     {
         $data = json_decode($this->getResponse()->getResponse()->getBody());
         $reader = new Selector($data);
         $readPointer = new Pointer($reader);
         $actualValue = $readPointer->read($path)->getAsStruct();
-        PHPUnit_Framework_Assert::assertEquals($expectedValue, $actualValue, $errorMessage);
+
+        PHPUnit_Framework_Assert::assertEquals(
+            $expectedValue,
+            $actualValue,
+            $this->getErrorMessage($errorMessage)
+        );
 
         return $this;
     }
 
 
     /**
-     * TODO
      * @param string $expectedKey
      * @param string $errorMessage
      * @return $this
      */
-    public function hasHeader(string $expectedKey, string $errorMessage)
+    public function hasHeader(string $expectedKey, string $errorMessage = '')
     {
+        $has = $this
+            ->getResponse()
+            ->getResponse()
+            ->hasHeader($expectedKey);
+
+        PHPUnit_Framework_Assert::assertTrue($has, $this->getErrorMessage($errorMessage));
+
         return $this;
     }
 
 
     /**
-     * TODO
      * @param string $expectedKey
-     * @param string $expectedValue
+     * @param string[] $expectedValues
      * @param string $errorMessage
      * @return $this
      */
-    public function header(string $expectedKey, string $expectedValue, string $errorMessage)
+    public function header(string $expectedKey, array $expectedValues, string $errorMessage = '')
     {
+        $has = $this
+            ->getResponse()
+            ->getResponse()
+            ->hasHeader($expectedKey);
+
+        PHPUnit_Framework_Assert::assertTrue($has, $this->getErrorMessage($errorMessage));
+
+        $headers = $this
+            ->getResponse()
+            ->getResponse()
+            ->getHeader($expectedKey);
+
+        PHPUnit_Framework_Assert::assertEquals($expectedValues, $headers, $this->getErrorMessage($errorMessage));
+
         return $this;
     }
 
@@ -102,7 +133,7 @@ class ResponseValidator
      * @param string $errorMessage
      * @return $this
      */
-    public function jsonSchema(string $schema, string $errorMessage)
+    public function jsonSchema(string $schema, string $errorMessage = '')
     {
         return $this;
     }
