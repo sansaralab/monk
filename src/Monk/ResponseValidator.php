@@ -2,6 +2,9 @@
 
 namespace Monk\Monk;
 
+use JsonSchema\Constraints\Factory;
+use JsonSchema\SchemaStorage;
+use JsonSchema\Validator;
 use PHPUnit_Framework_Assert;
 use Remorhaz\JSON\Data\Reference\Selector;
 use Remorhaz\JSON\Pointer\Pointer;
@@ -128,13 +131,24 @@ class ResponseValidator
 
 
     /**
-     * TODO
      * @param string $schema
      * @param string $errorMessage
      * @return $this
      */
     public function jsonSchema(string $schema, string $errorMessage = '')
     {
+        $body = (string) $this->getResponse()->getResponse()->getBody();
+        $data = json_decode($body);
+
+        $jsonSchemaObject = json_decode($schema);
+        $schemaStorage = new SchemaStorage();
+        $schemaStorage->addSchema('file://schema', $jsonSchemaObject);
+
+        $validator = new Validator(new Factory($schemaStorage));
+        $validator->check($data, $jsonSchemaObject);
+
+        PHPUnit_Framework_Assert::assertTrue($validator->isValid(), $errorMessage);
+
         return $this;
     }
 }

@@ -121,6 +121,8 @@ class Monk extends Factory
 
         $requestParameters = [];
 
+        $requestParameters['stream'] = false;
+
         // setting parameters by type
         $paramsData = $this->config()->getParams();
         if (in_array($this->method, [Method::POST, Method::PUT, Method::DELETE])) {
