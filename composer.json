@@ -1,6 +1,7 @@
 {
     "name": "sansaralab/monk",
     "description": "API testing automation tool",
+    "keywords": ["api", "testing"],
     "type": "library",
     "license": "MIT",
     "authors": [
