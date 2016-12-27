@@ -110,7 +110,7 @@ class ResponseValidator
      * @param string $errorMessage
      * @return $this
      */
-    public function header(string $expectedKey, array $expectedValues, string $errorMessage = '')
+    public function headers(string $expectedKey, array $expectedValues, string $errorMessage = '')
     {
         $has = $this
             ->getResponse()

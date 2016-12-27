@@ -27,4 +27,26 @@ class RequestTest extends PHPUnit_Framework_TestCase
             ->assert()
             ->statusCode(404, 'Resource should not be found');
     }
+
+
+    public function testHasHeader()
+    {
+        $this
+            ->getMonk()
+            ->setResource('sansaralab.com')
+            ->send()
+            ->assert()
+            ->hasHeader('Content-Type');
+    }
+
+
+    public function testHeader()
+    {
+        $this
+            ->getMonk()
+            ->setResource('sansaralab.com')
+            ->send()
+            ->assert()
+            ->headers('Content-Type', ['text/html; charset=utf-8']);
+    }
 }
